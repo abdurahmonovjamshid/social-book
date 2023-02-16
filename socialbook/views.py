@@ -102,10 +102,12 @@ def profile(request, pk):
 @login_required(login_url='signin')
 def upload(request):
     if request.method == 'POST':
+        user_obj = User.objects.get(username=request.user.username)
+        user_profile = Profile.objects.get(user=user_obj)
         user = request.user.username
         image = request.FILES.get('image_upload')
         caption = request.POST['caption']
-        new_post = Post.objects.create(user=user, image=image, caption=caption)
+        new_post = Post.objects.create(owner=user_profile, user=user, image=image, caption=caption)
         new_post.save()
         return redirect('/')
     else:

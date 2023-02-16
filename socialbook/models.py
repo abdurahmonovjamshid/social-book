@@ -20,6 +20,7 @@ class Profile(models.Model):
 
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    owner = models.ForeignKey(Profile, on_delete=models.CharField, default=1)
     user = models.CharField(max_length=100)
     image = models.ImageField(upload_to='post_images')
     caption = models.TextField()
