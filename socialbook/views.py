@@ -1,3 +1,5 @@
+import random
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
@@ -28,7 +30,19 @@ def index(request):
 
     feed_list = list(chain(*feed))
 
-    return render(request, 'index.html', {'user_profile': user_profile, 'posts': feed_list})
+    all_profile = Profile.objects.all()
+    suggested_users = []
+
+    for profile in all_profile:
+        if FollowersCount.objects.filter(follower=request.user.username,
+                                         user=profile.user) or profile.user == user_profile.user:
+            pass
+        else:
+            suggested_users.append(profile)
+
+    random.shuffle(suggested_users)
+    return render(request, 'index.html',
+                  {'user_profile': user_profile, 'posts': feed_list, 'suggested_users': suggested_users})
 
 
 @login_required(login_url='signin')
@@ -153,7 +167,7 @@ def settings(request):
         user_profile.bio = bio
         user_profile.location = location
         user_profile.save()
-        return redirect('settings')
+        return redirect('/profile/' + user_profile.user.username)
 
     return render(request, 'setting.html', {'user_profile': user_profile})
 

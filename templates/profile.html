@@ -118,7 +118,7 @@
 </section><!-- top area -->
 <section>
     <div class="bio">
-        {{user_profile.bio}}
+        {{user_profile.bio | linebreaks|truncatewords:15000|safe}}
     </div>
 </section>
 

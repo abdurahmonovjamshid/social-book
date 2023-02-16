@@ -344,7 +344,7 @@
                                 <h4 class="search-result-item-heading"><a href="/profile/{{users.user}}"><b>@{{users.user}}</b></a>
                                 </h4>
                                 <p class="info">{{users.location}}</p>
-                                <p class="description">{{users.bio}}</p>
+                                <p class="description">{{users.bio | linebreaks|truncatewords:50|safe}}</p>
                             </div>
                             <!-- <div class="col-sm-3 text-align-center">
                                 <p class="value3 mt-sm">$9, 700</p>
