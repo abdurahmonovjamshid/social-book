@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Profile, Post, LikePost
+from .models import Profile, Post, LikePost, FollowersCount
 from django.http import HttpResponse
 
 
@@ -46,11 +46,25 @@ def profile(request, pk):
         user_profile = Profile.objects.get(user=user_obj)
         user_posts = Post.objects.filter(user=pk)
 
+        follower = request.user.username
+        user = pk
+
+        if FollowersCount.objects.filter(follower=follower, user=user):
+            button_text = 'Unfollow'
+        else:
+            button_text = 'Follow'
+
+        user_followers = FollowersCount.objects.filter(user=pk).count()
+        user_following = FollowersCount.objects.filter(follower=pk).count()
+
         context = {
             'user_obj': user_obj,
             'user_profile': user_profile,
             'user_posts': user_posts,
             'user_post_length': user_posts.count(),
+            'button_text': button_text,
+            'user_followers': user_followers,
+            'user_following': user_following,
         }
         return render(request, 'profile.html', context)
     except:
@@ -66,6 +80,24 @@ def upload(request):
         new_post = Post.objects.create(user=user, image=image, caption=caption)
         new_post.save()
         return redirect('/')
+    else:
+        return redirect('/')
+
+
+@login_required(login_url='signin')
+def follow(request):
+    if request.method == 'POST':
+        follower = request.POST['follower']
+        user = request.POST['user']
+
+        if FollowersCount.objects.filter(follower=follower, user=user).first():
+            delete_follower = FollowersCount.objects.get(follower=follower, user=user)
+            delete_follower.delete()
+            return redirect('/profile/' + user)
+        else:
+            new_follower = FollowersCount.objects.create(follower=follower, user=user)
+            new_follower.save()
+            return redirect('/profile/' + user)
     else:
         return redirect('/')
 
@@ -113,7 +145,7 @@ def signup(request):
                     user_model = User.objects.get(username=user)
                     new_profile = Profile.objects.create(user=user_model, id_user=user_model.id)
                     new_profile.save()
-                    redirect('settings')
+                    return redirect('settings')
             else:
                 messages.info(request, 'Password Not Matching')
                 return redirect('signup')

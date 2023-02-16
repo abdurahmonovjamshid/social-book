@@ -201,6 +201,7 @@
             <a href="#">
                 <img src="{{user_profile.profileimg.url}}" class="header-avatar" alt="">
             </a>
+<!--            @{{user_profile.user}}-->
             <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
                 <ul>
                     <li><a href="/settings"> Account setting </a></li>
@@ -234,7 +235,7 @@
                                      class="bg-gray-200 border border-white rounded-full w-8 h-8">
                             </div>
                         </a>
-                        <span class="block capitalize font-semibold "><a href="">@{{post.user}}</a>  </span>
+                        <span class="block capitalize font-semibold "><a href="/profile/{{post.user}}">@{{post.user}}</a>  </span>
                     </div>
                     <div>
                         <a href="#"> <i
